@@ -307,7 +307,7 @@ a.logout{
     cursor: pointer;
 }
 
-.item:hover h1.title, .item:hover .buttons{
+.item:hover h1.title{
     color: #999;
 }
 
@@ -352,6 +352,14 @@ a.logout{
 }
 
 .item.read{
+    color: #999;
+}
+
+.item .save{
+    transition: .1s linear;
+}
+
+.item .save:hover{
     color: #999;
 }
 /*!

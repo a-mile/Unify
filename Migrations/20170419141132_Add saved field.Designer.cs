@@ -8,9 +8,10 @@ using UnifyCore.Models;
 namespace UnifyCore.Migrations
 {
     [DbContext(typeof(UnifyDbContext))]
-    partial class UnifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170419141132_Add saved field")]
+    partial class Addsavedfield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1");

@@ -35,6 +35,8 @@ namespace UnifyCore.Models
 
         public ArticleState State { get; set; }
 
+        public bool Saved {get;set;}
+
 
         public virtual Source Source { get; set; }
 

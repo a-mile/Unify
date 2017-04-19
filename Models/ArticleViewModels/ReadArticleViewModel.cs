@@ -17,5 +17,7 @@ namespace UnifyCore.Models.ArticleViewModels
         public string PublicationTime { get; set; }
 
         public bool Read { get; set; }
+
+        public bool Saved {get;set;}
     }
 }

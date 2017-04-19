@@ -47,6 +47,18 @@
 		navigationController.showAllSources = false;
 		navigationController.showAllTags = false;
 
+		navigationController.allFilter = function(){
+			//$route.reload();
+			$location.path('/'+navigationController.routes.itemType+"/"+navigationController.routes.selectedItemId+"/all");
+			$location.replace();					
+		}
+
+		navigationController.unreadFilter = function(){
+			//$route.reload();
+			$location.path('/'+navigationController.routes.itemType+"/"+navigationController.routes.selectedItemId+"/unread");
+			$location.replace();					
+		}
+
 		navigationController.deleteItem = function () {
 			if (navigationController.routes.itemType == "source") {
 				navigationSvc.deleteSource(navigationController.routes.selectedItemId).then(
@@ -60,7 +72,7 @@
 		};
 
 		navigationController.markAsRead = function(){
-			if(navigationController.routes.itemType == 'all' || navigationController.routes.itemType == 'unread' || navigationController.routes.itemType == 'saved'){
+			if(navigationController.routes.itemType == 'all' || navigationController.routes.itemType == 'unread'){
 				articlesSvc.markAllAsRead().then(
 					function(response){
 						$route.reload();
@@ -68,6 +80,15 @@
 						$location.replace();	
 					}
 				);
+			}
+			if(navigationController.routes.itemType == 'saved'){
+				articlesSvc.markSavedAsRead().then(
+					function(response){
+						$route.reload();
+						$location.path('/'+navigationController.routes.itemType);
+						$location.replace();	
+					}
+				);	
 			}
 			if(navigationController.routes.itemType == 'source'){
 				articlesSvc.markSourceAsRead(navigationController.routes.selectedItemId).then(

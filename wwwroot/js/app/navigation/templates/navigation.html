@@ -3,10 +3,10 @@
         <li class="logo"><i class="fa fa-paper-plane" aria-hidden="true"></i>Unify</li>
         <li>
             <div class="top-container">
-                <div class="one-second"><a ng-href="#!/{{navigationController.routes.itemType}}/{{navigationController.routes.selectedItemId}}/all" class="color-anim" ng-class="{buttonActive: navigationController.routes.itemFilter == 'all' && navigationController.routes.selectedItemId != null}"
-                    ng-disabled="navigationController.routes.selectedItemId == null">All</a></div>
-                <div class="one-second"><a ng-href="#!/{{navigationController.routes.itemType}}/{{navigationController.routes.selectedItemId}}/unread" class="color-anim" ng-class="{buttonActive: navigationController.routes.itemFilter == 'unread' && navigationController.routes.selectedItemId != null}"
-                    ng-disabled="navigationController.routes.selectedItemId == null">Unread</a></div>
+                <div class="one-second"><button ng-click="navigationController.allFilter()" class="color-anim" ng-class="{buttonActive: navigationController.routes.itemFilter == 'all' && navigationController.routes.selectedItemId != null}"
+                    ng-disabled="navigationController.routes.selectedItemId == null">All</button></div>
+                <div class="one-second"><button ng-click="navigationController.unreadFilter()" class="color-anim" ng-class="{buttonActive: navigationController.routes.itemFilter == 'unread' && navigationController.routes.selectedItemId != null}"
+                    ng-disabled="navigationController.routes.selectedItemId == null">Unread</button></div>
             </div>
         </li>
         <li>

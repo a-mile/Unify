@@ -14,28 +14,31 @@ namespace UnifyCore.Controllers
     public class ArticleController : Controller
     {
         private readonly UnifyDbContext _unifyDbContext;
-        private readonly UserManager<UnifyUser> _userManager;   
-        
+        private readonly UserManager<UnifyUser> _userManager;
+
         private readonly int _pageSize = 10;
 
         public ArticleController(UnifyDbContext unifyDbContext, UserManager<UnifyUser> userManager)
         {
             _unifyDbContext = unifyDbContext;
-            _userManager = userManager;   
+            _userManager = userManager;
         }
 
-        public JsonResult GetAll(int page, string keyWords = null){            
-            var articles = _unifyDbContext.Articles.Where(x=>x.UnifyUserId == _userManager.GetUserId(User) &&
-                (string.IsNullOrEmpty(keyWords) || x.Title.Contains(keyWords) || x.Description.Contains(keyWords)))
-                .Include(x=>x.Source)
+        public JsonResult GetAll(int page, string keywords = null)
+        {
+            var articles = _unifyDbContext.Articles.Where(x => x.UnifyUserId == _userManager.GetUserId(User) &&
+                (string.IsNullOrEmpty(keywords) || x.Title.Contains(keywords) || x.Description.Contains(keywords)))
+                .Include(x => x.Source)
                 .OrderByDescending(x => x.PubDate)
                 .Skip((page - 1) * _pageSize)
                 .Take(_pageSize).ToList();
 
             var articlesViewModels = new List<ArticleViewModel>();
 
-            foreach(var article in articles){
-                articlesViewModels.Add(new ArticleViewModel(){
+            foreach (var article in articles)
+            {
+                articlesViewModels.Add(new ArticleViewModel()
+                {
                     Id = article.Id,
                     Title = article.Title,
                     Description = article.Description,
@@ -43,26 +46,30 @@ namespace UnifyCore.Controllers
                     SourceName = article.Source.Name,
                     Tags = article.Source.Tags,
                     PublicationTime = GetPublicationTime(article.PubDate),
-                    Read = article.State == ArticleState.Read
+                    Read = article.State == ArticleState.Read,
+                    Saved = article.Saved
                 });
             }
 
             return Json(articlesViewModels);
-        }  
+        }
 
-        public JsonResult GetUnread(int page, string keyWords = null){            
-            var articles = _unifyDbContext.Articles.Where(x=>x.UnifyUserId == _userManager.GetUserId(User) &&
-                (string.IsNullOrEmpty(keyWords) || x.Title.Contains(keyWords) || x.Description.Contains(keyWords)) &&
+        public JsonResult GetUnread(int page, string keywords = null)
+        {
+            var articles = _unifyDbContext.Articles.Where(x => x.UnifyUserId == _userManager.GetUserId(User) &&
+                (string.IsNullOrEmpty(keywords) || x.Title.Contains(keywords) || x.Description.Contains(keywords)) &&
                 x.State == ArticleState.New)
-                .Include(x=>x.Source)
+                .Include(x => x.Source)
                 .OrderByDescending(x => x.PubDate)
                 .Skip((page - 1) * _pageSize)
                 .Take(_pageSize).ToList();
 
             var articlesViewModels = new List<ArticleViewModel>();
 
-            foreach(var article in articles){
-                articlesViewModels.Add(new ArticleViewModel(){
+            foreach (var article in articles)
+            {
+                articlesViewModels.Add(new ArticleViewModel()
+                {
                     Id = article.Id,
                     Title = article.Title,
                     Description = article.Description,
@@ -70,26 +77,30 @@ namespace UnifyCore.Controllers
                     SourceName = article.Source.Name,
                     Tags = article.Source.Tags,
                     PublicationTime = GetPublicationTime(article.PubDate),
-                    Read = article.State == ArticleState.Read
+                    Read = article.State == ArticleState.Read,
+                    Saved = article.Saved
                 });
             }
 
             return Json(articlesViewModels);
-        }   
+        }
 
-        public JsonResult GetSaved(int page, string keyWords = null){            
-            var articles = _unifyDbContext.Articles.Where(x=>x.UnifyUserId == _userManager.GetUserId(User) &&
-                (string.IsNullOrEmpty(keyWords) || x.Title.Contains(keyWords) || x.Description.Contains(keyWords)) &&
-                x.State == ArticleState.Saved)
-                .Include(x=>x.Source)
+        public JsonResult GetSaved(int page, string keywords = null)
+        {
+            var articles = _unifyDbContext.Articles.Where(x => x.UnifyUserId == _userManager.GetUserId(User) &&
+                (string.IsNullOrEmpty(keywords) || x.Title.Contains(keywords) || x.Description.Contains(keywords)) &&
+                x.Saved)
+                .Include(x => x.Source)
                 .OrderByDescending(x => x.PubDate)
                 .Skip((page - 1) * _pageSize)
                 .Take(_pageSize).ToList();
 
             var articlesViewModels = new List<ArticleViewModel>();
 
-            foreach(var article in articles){
-                articlesViewModels.Add(new ArticleViewModel(){
+            foreach (var article in articles)
+            {
+                articlesViewModels.Add(new ArticleViewModel()
+                {
                     Id = article.Id,
                     Title = article.Title,
                     Description = article.Description,
@@ -97,27 +108,31 @@ namespace UnifyCore.Controllers
                     SourceName = article.Source.Name,
                     Tags = article.Source.Tags,
                     PublicationTime = GetPublicationTime(article.PubDate),
-                    Read = article.State == ArticleState.Read
+                    Read = article.State == ArticleState.Read,
+                    Saved = article.Saved
                 });
             }
 
             return Json(articlesViewModels);
-        }     
+        }
 
-        public JsonResult GetSource(int page, int id, string filter, string keyWords = null){
-            var articles = _unifyDbContext.Articles.Where(x=>x.UnifyUserId == _userManager.GetUserId(User) &&
-                (string.IsNullOrEmpty(keyWords) || x.Title.Contains(keyWords) || x.Description.Contains(keyWords)) &&
-                ((filter == "all")||x.State == ArticleState.New) &&
+        public JsonResult GetSource(int page, int id, string filter, string keywords = null)
+        {
+            var articles = _unifyDbContext.Articles.Where(x => x.UnifyUserId == _userManager.GetUserId(User) &&
+                (string.IsNullOrEmpty(keywords) || x.Title.Contains(keywords) || x.Description.Contains(keywords)) &&
+                ((filter == "all") || x.State == ArticleState.New) &&
                 x.SourceId == id)
-                .Include(x=>x.Source)
+                .Include(x => x.Source)
                 .OrderByDescending(x => x.PubDate)
                 .Skip((page - 1) * _pageSize)
                 .Take(_pageSize).ToList();
 
             var articlesViewModels = new List<ArticleViewModel>();
 
-            foreach(var article in articles){
-                articlesViewModels.Add(new ArticleViewModel(){
+            foreach (var article in articles)
+            {
+                articlesViewModels.Add(new ArticleViewModel()
+                {
                     Id = article.Id,
                     Title = article.Title,
                     Description = article.Description,
@@ -125,28 +140,32 @@ namespace UnifyCore.Controllers
                     SourceName = article.Source.Name,
                     Tags = article.Source.Tags,
                     PublicationTime = GetPublicationTime(article.PubDate),
-                    Read = article.State == ArticleState.Read
+                    Read = article.State == ArticleState.Read,
+                    Saved = article.Saved
                 });
             }
 
-            return Json(articlesViewModels);    
-        }   
+            return Json(articlesViewModels);
+        }
 
-        public JsonResult GetTag(int page, string id, string filter, string keyWords = null){
+        public JsonResult GetTag(int page, string id, string filter, string keywords = null)
+        {
             var articles = _unifyDbContext.Articles
-                .Include(x=>x.Source)
-                .Where(x=>x.UnifyUserId == _userManager.GetUserId(User) &&
-                    (string.IsNullOrEmpty(keyWords) || x.Title.Contains(keyWords) || x.Description.Contains(keyWords)) &&
-                    ((filter == "all")||x.State == ArticleState.New) && 
-                    x.Source.Tags.Contains(id))                
+                .Include(x => x.Source)
+                .Where(x => x.UnifyUserId == _userManager.GetUserId(User) &&
+                    (string.IsNullOrEmpty(keywords) || x.Title.Contains(keywords) || x.Description.Contains(keywords)) &&
+                    ((filter == "all") || x.State == ArticleState.New) &&
+                    x.Source.Tags.Contains(id))
                 .OrderByDescending(x => x.PubDate)
                 .Skip((page - 1) * _pageSize)
                 .Take(_pageSize).ToList();
 
             var articlesViewModels = new List<ArticleViewModel>();
 
-            foreach(var article in articles){
-                articlesViewModels.Add(new ArticleViewModel(){
+            foreach (var article in articles)
+            {
+                articlesViewModels.Add(new ArticleViewModel()
+                {
                     Id = article.Id,
                     Title = article.Title,
                     Description = article.Description,
@@ -154,59 +173,83 @@ namespace UnifyCore.Controllers
                     SourceName = article.Source.Name,
                     Tags = article.Source.Tags,
                     PublicationTime = GetPublicationTime(article.PubDate),
-                    Read = article.State == ArticleState.Read
+                    Read = article.State == ArticleState.Read,
+                    Saved = article.Saved
                 });
             }
 
-            return Json(articlesViewModels);    
-        }     
+            return Json(articlesViewModels);
+        }
 
         [HttpPost]
-        public JsonResult MarkAllAsRead(){
-            var articles = _unifyDbContext.Articles.Where(x=>x.UnifyUserId == _userManager.GetUserId(User)).ToList();
+        public JsonResult MarkAllAsRead()
+        {
+            var articles = _unifyDbContext.Articles.Where(x => x.UnifyUserId == _userManager.GetUserId(User)).ToList();
 
-            foreach(var article in articles){
+            foreach (var article in articles)
+            {
                 article.State = ArticleState.Read;
             }
 
             _unifyDbContext.SaveChanges();
 
             return Json("success");
-        }     
+        }
 
         [HttpPost]
-        public JsonResult MarkSourceAsRead([FromBody]int id){
-            var articles = _unifyDbContext.Articles.Where(x=>x.UnifyUserId == _userManager.GetUserId(User) && x.SourceId == id).ToList();
+        public JsonResult MarkSavedAsRead()
+        {
+            var articles = _unifyDbContext.Articles.Where(x => x.UnifyUserId == _userManager.GetUserId(User) && x.Saved).ToList();
 
-            foreach(var article in articles){
+            foreach (var article in articles)
+            {
                 article.State = ArticleState.Read;
             }
 
             _unifyDbContext.SaveChanges();
 
             return Json("success");
-        }  
+        }
 
         [HttpPost]
-        public JsonResult MarkTagAsRead([FromBody]string id){
+        public JsonResult MarkSourceAsRead([FromBody]int id)
+        {
+            var articles = _unifyDbContext.Articles.Where(x => x.UnifyUserId == _userManager.GetUserId(User) && x.SourceId == id).ToList();
+
+            foreach (var article in articles)
+            {
+                article.State = ArticleState.Read;
+            }
+
+            _unifyDbContext.SaveChanges();
+
+            return Json("success");
+        }
+
+        [HttpPost]
+        public JsonResult MarkTagAsRead([FromBody]string id)
+        {
             var articles = _unifyDbContext.Articles
-                .Include(x=>x.Source)
-                .Where(x=>x.UnifyUserId == _userManager.GetUserId(User) && x.Source.Tags.Contains(id)).ToList();
+                .Include(x => x.Source)
+                .Where(x => x.UnifyUserId == _userManager.GetUserId(User) && x.Source.Tags.Contains(id)).ToList();
 
-            foreach(var article in articles){
+            foreach (var article in articles)
+            {
                 article.State = ArticleState.Read;
             }
 
             _unifyDbContext.SaveChanges();
 
             return Json("success");
-        }  
+        }
 
         [HttpPost]
-        public JsonResult MarkArticeAsRead([FromBody]int id){
-            var article = _unifyDbContext.Articles.Where(x=>x.Id == id).FirstOrDefault();
+        public JsonResult MarkArticleAsRead([FromBody]int id)
+        {
+            var article = _unifyDbContext.Articles.Where(x => x.Id == id).FirstOrDefault();
 
-            if(article == null){
+            if (article == null)
+            {
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json("there is no source with this id");
             }
@@ -216,7 +259,43 @@ namespace UnifyCore.Controllers
             _unifyDbContext.SaveChanges();
 
             return Json("success");
-        }       
+        }
+
+        [HttpPost]
+        public JsonResult SaveArticle([FromBody]int id)
+        {
+            var article = _unifyDbContext.Articles.Where(x => x.Id == id).FirstOrDefault();
+
+            if (article == null)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json("there is no source with this id");
+            }
+
+            article.Saved = true;
+
+            _unifyDbContext.SaveChanges();
+
+            return Json("success");
+        }
+
+        [HttpPost]
+        public JsonResult UnSaveArticle([FromBody]int id)
+        {
+            var article = _unifyDbContext.Articles.Where(x => x.Id == id).FirstOrDefault();
+
+            if (article == null)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json("there is no source with this id");
+            }
+
+            article.Saved = false;
+
+            _unifyDbContext.SaveChanges();
+
+            return Json("success");
+        }
 
         private string GetPublicationTime(DateTime date)
         {

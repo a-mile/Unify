@@ -6,15 +6,15 @@
 	window.app.config(function ($routeProvider,$locationProvider) {
 		$routeProvider
 			.when('/', {redirectTo : '/all'})
-			.when('/:type/:id?/:filter?', {
+			.when('/:type/:id?/:filter?/:keywords?', {
 				templateUrl: "js/app/articles/templates/articlesList.html",
 				controller: "articlesController"
 			})			
 	});
 
-	window.app.controller("articlesController", function (articlesSvc, $scope, $routeParams) {
+	window.app.controller("articlesController", function (articlesSvc, $scope, $routeParams, $window) {
 		$scope.getAllArticles = function () {
-			articlesSvc.getAllArticles($scope.page).then(
+			articlesSvc.getAllArticles($scope.page, $routeParams.id).then(
 				function (response) {					
 					$scope.articles = $scope.articles.concat(response.data);
 					$scope.load = false;
@@ -23,7 +23,7 @@
 		};
 
 		$scope.getUnreadArticles = function () {
-			articlesSvc.getUnreadArticles($scope.page).then(
+			articlesSvc.getUnreadArticles($scope.page, $routeParams.id).then(
 				function (response) {
 					$scope.articles = $scope.articles.concat(response.data);
 					$scope.load = false;
@@ -32,7 +32,7 @@
 		};
 
 		$scope.getSavedArticles = function () {
-			articlesSvc.getSavedArticles($scope.page).then(
+			articlesSvc.getSavedArticles($scope.page, $routeParams.id).then(
 				function (response) {
 					$scope.articles = $scope.articles.concat(response.data);
 					$scope.load = false;
@@ -41,7 +41,7 @@
 		};
 
 		$scope.getSource = function () {
-			articlesSvc.getSource($scope.page, $routeParams.id, $routeParams.filter).then(
+			articlesSvc.getSource($scope.page, $routeParams.id, $routeParams.filter, $routeParams.keywords).then(
 				function (response) {
 					$scope.articles = $scope.articles.concat(response.data);
 					$scope.load = false;
@@ -50,7 +50,7 @@
 		};
 
 		$scope.getTag = function () {
-			articlesSvc.getTag($scope.page, $routeParams.id, $routeParams.filter).then(
+			articlesSvc.getTag($scope.page, $routeParams.id, $routeParams.filter, $routeParams.keywords).then(
 				function (response) {
 					$scope.articles = $scope.articles.concat(response.data);
 					$scope.load = false;
@@ -79,6 +79,33 @@
 				}						
 		};
 
+		$scope.saveArticle = function(article){		
+			if(!article.saved)
+			{
+				articlesSvc.saveArticle(article.id).then(
+					function(response){	
+						article.saved = true;															
+					}	
+				);
+			}
+			else{
+				articlesSvc.unSaveArticle(article.id).then(
+					function(response){
+						article.saved = false;						
+					}	
+				);
+			}
+		}
+
+		$scope.openArticle = function(article){
+			$window.open(article.url);
+			articlesSvc.markArticleAsRead(article.id).then(
+				function(response){
+					article.read = true;
+				}
+			);
+		}
+
 		$scope.incrementPageAndLoadArticles = function(){
 			$scope.page = $scope.page + 1;
 			$scope.loadArticles();
@@ -91,6 +118,47 @@
 			$scope.loadArticles();		
 		});			
 	});
+})();
+(function() {
+	"use strict";
+
+	window.app.directive('search', search);
+
+	function search() {
+		return {
+			templateUrl: 'js/app/search/templates/search.html',
+			controller: controller,
+			controllerAs: 'searchController'            
+		}
+	}
+
+	controller.$inject = ['$routeParams','$location','$scope'];
+	function controller($routeParams,$location,$scope) {
+		var searchController = this;		
+
+        $scope.$on('$routeChangeSuccess', function () {
+			searchController.routes = {
+			itemType: $routeParams.type,
+			itemFilter: $routeParams.filter,
+			selectedItemId: $routeParams.id,            
+		    }
+		});		
+
+        searchController.keyWords = "";
+
+        searchController.search = function(){
+            if(searchController.routes.itemType == "source" || searchController.routes.itemType == "tag"){
+                $location.path('/'+searchController.routes.itemType+'/'+searchController.routes.selectedItemId+'/'+searchController.routes.itemFilter+'/'+searchController.keyWords);
+			    $location.replace();
+            }
+            if(searchController.routes.itemType == "all" || searchController.routes.itemType == "unread" || searchController.routes.itemType == "saved"){
+                $location.path('/'+searchController.routes.itemType + '/'+searchController.keyWords);
+			    $location.replace();
+            }
+            
+        }	
+		
+	}
 })();
 (function() {
 	"use strict";
@@ -302,6 +370,18 @@
 		navigationController.showAllSources = false;
 		navigationController.showAllTags = false;
 
+		navigationController.allFilter = function(){
+			//$route.reload();
+			$location.path('/'+navigationController.routes.itemType+"/"+navigationController.routes.selectedItemId+"/all");
+			$location.replace();					
+		}
+
+		navigationController.unreadFilter = function(){
+			//$route.reload();
+			$location.path('/'+navigationController.routes.itemType+"/"+navigationController.routes.selectedItemId+"/unread");
+			$location.replace();					
+		}
+
 		navigationController.deleteItem = function () {
 			if (navigationController.routes.itemType == "source") {
 				navigationSvc.deleteSource(navigationController.routes.selectedItemId).then(
@@ -315,7 +395,7 @@
 		};
 
 		navigationController.markAsRead = function(){
-			if(navigationController.routes.itemType == 'all' || navigationController.routes.itemType == 'unread' || navigationController.routes.itemType == 'saved'){
+			if(navigationController.routes.itemType == 'all' || navigationController.routes.itemType == 'unread'){
 				articlesSvc.markAllAsRead().then(
 					function(response){
 						$route.reload();
@@ -323,6 +403,15 @@
 						$location.replace();	
 					}
 				);
+			}
+			if(navigationController.routes.itemType == 'saved'){
+				articlesSvc.markSavedAsRead().then(
+					function(response){
+						$route.reload();
+						$location.path('/'+navigationController.routes.itemType);
+						$location.replace();	
+					}
+				);	
 			}
 			if(navigationController.routes.itemType == 'source'){
 				articlesSvc.markSourceAsRead(navigationController.routes.selectedItemId).then(
@@ -419,29 +508,32 @@
 			markAllAsRead: markAllAsRead,
 			markSourceAsRead: markSourceAsRead,
 			markTagAsRead: markTagAsRead,
-			markArticleAsRead: markArticleAsRead
+			markArticleAsRead: markArticleAsRead,
+			markSavedAsRead: markSavedAsRead,
+			saveArticle: saveArticle,
+			unSaveArticle: unSaveArticle
 		};
 
 		return svc;
 
-		function getAllArticles(page) {
-			return $http.get('/Article/GetAll', { params: { page: page } });
+		function getAllArticles(page, keywords) {
+			return $http.get('/Article/GetAll', { params: { page: page, keywords: keywords } });
 		}
 
-		function getUnreadArticles(page) {
-			return $http.get('/Article/GetUnread', { params: { page: page } });
+		function getUnreadArticles(page, keywords) {
+			return $http.get('/Article/GetUnread', { params: { page: page, keywords: keywords } });
 		}
 
-		function getSavedArticles(page) {
-			return $http.get('/Article/GetSaved', { params: { page: page } });
+		function getSavedArticles(page, keywords) {
+			return $http.get('/Article/GetSaved', { params: { page: page, keywords: keywords } });
 		}
 
-		function getSource(page,id,filter) {
-			return $http.get('/Article/GetSource', { params: { page: page, id:id, filter:filter } });
+		function getSource(page,id,filter, keywords) {
+			return $http.get('/Article/GetSource', { params: { page: page, id:id, filter:filter, keywords: keywords } });
 		}
 
-		function getTag(page,id,filter) {
-			return $http.get('/Article/GetTag', { params: { page: page, id:id, filter:filter } });
+		function getTag(page,id,filter, keywords) {
+			return $http.get('/Article/GetTag', { params: { page: page, id:id, filter:filter, keywords: keywords } });
 		}
 
 		function markAllAsRead(){
@@ -458,6 +550,18 @@
 
 		function markArticleAsRead(articleId){
 			return $http.post('/Article/MarkArticleAsRead', articleId);
+		}
+
+		function markSavedAsRead(){
+			return $http.post('/Article/MarkSavedAsRead');
+		}
+
+		function saveArticle(articeId){
+			return $http.post('/Article/SaveArticle',articeId);
+		}
+
+		function unSaveArticle(articeId){
+			return $http.post('/Article/UnSaveArticle',articeId);
 		}
 	}
 })();
