@@ -7,9 +7,10 @@ Asp.Net Core and AngularJS RSS Reader
 - Source tags support
 - Simple filters (all, unread, saved)
 - Marking articles as read
-
-#ToDo
 - Simple article search
 - Saving articles
+
+#ToDo
+- Refactoring !
 - Responsive layout
 - Article extraction
