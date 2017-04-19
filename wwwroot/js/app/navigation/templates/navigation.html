@@ -1,0 +1,33 @@
+<nav>
+    <ul>
+        <li class="logo"><i class="fa fa-paper-plane" aria-hidden="true"></i>Unify</li>
+        <li>
+            <div class="top-container">
+                <div class="one-second"><a ng-href="#!/{{navigationController.routes.itemType}}/{{navigationController.routes.selectedItemId}}/all" class="color-anim" ng-class="{buttonActive: navigationController.routes.itemFilter == 'all' && navigationController.routes.selectedItemId != null}"
+                    ng-disabled="navigationController.routes.selectedItemId == null">All</a></div>
+                <div class="one-second"><a ng-href="#!/{{navigationController.routes.itemType}}/{{navigationController.routes.selectedItemId}}/unread" class="color-anim" ng-class="{buttonActive: navigationController.routes.itemFilter == 'unread' && navigationController.routes.selectedItemId != null}"
+                    ng-disabled="navigationController.routes.selectedItemId == null">Unread</a></div>
+            </div>
+        </li>
+        <li>
+            <a class="color-anim border-anim" href="#!/all" ng-class="{active: navigationController.routes.itemType == 'all'}"><i class="fa fa-circle" aria-hidden="true"></i>All<span class="counter">99+</span></a>
+        </li>
+        <li>
+            <a class="color-anim border-anim" href="#!/unread" ng-class="{active: navigationController.routes.itemType == 'unread'}"><i class="fa fa-circle-o" aria-hidden="true"></i>Unread<span class="counter">55</span></a>
+        </li>
+        <li>
+            <a class="color-anim border-anim" href="#!/saved" ng-class="{active: navigationController.routes.itemType == 'saved'}"><i class="fa fa-folder" aria-hidden="true"></i></i>Saved<span class="counter">1</span></a>
+        </li>
+        <br>
+        <add-source></add-source>
+        <sources-list></sources-list>
+        <br>
+        <li class="bold"><a href="">Tags</a></li>
+        <tags-list></tags-list>        
+    </ul>
+    <div class="bottom-container">
+        <div class="one-third"><button ng-click="navigationController.edit = !navigationController.edit" class="color-anim" ng-disabled="navigationController.routes.selectedItemId == null || navigationController.routes.itemType == 'tag'" ng-class="{buttonActive: navigationController.edit}" id="editButton"><div class="huge"><i class="fa fa-bars" aria-hidden="true"></i></div>Edit</button></div>
+        <div class="one-third"><button class="color-anim" ng-disabled="navigationController.routes.selectedItemId == null || navigationController.routes.edit == true || navigationController.routes.itemType == 'tag'" ng-click="navigationController.deleteItem()"><div class="huge"><i class="fa fa-trash" aria-hidden="true"></i></div>Delete</button></div>
+        <div class="one-third"><button class="color-anim" ng-click="navigationController.markAsRead()" ng-disabled="false"><div class="huge"><i class="fa fa-check" aria-hidden="true"></i></div>Mark read</button></div>
+    </div>
+</nav>

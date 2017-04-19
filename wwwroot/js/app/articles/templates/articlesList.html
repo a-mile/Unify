@@ -1,0 +1,13 @@
+<div infinite-scroll="incrementPageAndLoadArticles()" infinite-scroll-disabled="load" infinite-scroll-distance="0">
+    <div ng-repeat="article in articles" class="item" ng-class="{read: article.read}">
+        <div class="buttons"><i class="fa fa-rss" aria-hidden="true"></i></div>
+        <div class="info">
+            <span class="source">{{article.sourceName}} {{article.tags}}</span>
+            <span class="date">{{article.publicationTime}}</span>
+        </div>
+        <div class="description">
+            <h1 class="title">{{article.title}}</h1>
+            <p>{{article.description}}</p>
+        </div>
+    </div>
+</div>

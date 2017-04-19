@@ -1,0 +1,10 @@
+{
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {    
+    "jquery": "latest",
+    "Font-Awesome": "latest",
+    "angular": "latest",
+    "angular-route": "latest"
+  }
+}

@@ -1,0 +1,46 @@
+﻿[
+  {
+    "outputFileName": "wwwroot/css/site.css",    
+    "inputFiles": [
+      "wwwroot/css/reset.css",
+      "wwwroot/css/app.css",
+      "wwwroot/lib/Font-Awesome/css/font-awesome.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/site.min.css",    
+    "inputFiles": [
+      "wwwroot/css/reset.css",
+      "wwwroot/css/app.css",
+      "wwwroot/lib/Font-Awesome/css/font-awesome.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site.min.js",
+    "inputFiles": [
+      "wwwroot/js/site.js"
+    ],    
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },    
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/app.js",
+    "inputFiles": [
+      "wwwroot/js/app/**/**.js"      
+    ]        
+  },
+  {
+    "outputFileName": "wwwroot/js/app.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/**/**.js"      
+    ],    
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },    
+    "sourceMap": false
+  }
+]

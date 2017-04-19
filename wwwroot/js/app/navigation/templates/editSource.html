@@ -1,0 +1,26 @@
+<div class="dialog">
+    <div class="dialog-title">Edit source</div>
+    <div class="input-container">
+        <form novalidate name="sourceController.form" ng-submit="sourceController.form.$valid && sourceController.editSource()">
+            <input type="text" placeholder="Name" ng-model="sourceController.newSource.name" name="name" required/>
+            <div class="error" ng-show="sourceController.form.$submitted || sourceController.form.name.$touched">
+                <span ng-show="sourceController.form.name.$error.required">Source name is required</span>                        
+            </div>  
+            <input type="url" placeholder="Url" ng-model="sourceController.newSource.url" name="url" required/>
+            <div class="error" ng-show="sourceController.form.$submitted || sourceController.form.url.$touched">
+                <span ng-show="sourceController.form.url.$error.required">Url is required</span>
+                <span ng-show="sourceController.form.url.$error.url">This is not valid url</span>                        
+            </div>  
+            <input type="text" placeholder="Tags" ng-model="sourceController.newSource.tags" name="tags" ng-pattern="/^(#[^#]+)*$/"/>
+            <div class="error" ng-show="sourceController.form.$submitted || sourceController.form.tags.$touched">                        
+                <span ng-show="sourceController.form.tags.$error.pattern">This is not valid tag list</span>                        
+            </div> 
+            <div class="error" ng-hide="sourceController.errorMessage == null">
+                <li ng-repeat="error in sourceController.errorMessage">
+                    {{error}}
+                </li>                        
+            </div>  
+            <input type="submit" class="color-anim" value="Update" ng-disabled="sourceController.form.$invalid"/>                                
+        </form>
+    </div>
+</div>  

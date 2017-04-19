@@ -1,0 +1,7 @@
+<li ng-repeat="tag in navigationController.tags" ng-show="$index < 3 || navigationController.showAllTags">
+    <a class="color-anim border-anim" href="#!/tag/{{tag}}/all" ng-class="{active: '{{tag}}' == navigationController.routes.selectedItemId && navigationController.routes.itemType == 'tag'}">
+        <i class="fa fa-tag" aria-hidden="true"></i>{{tag}}
+        <span class="counter">0</span>
+    </a>        
+</li>
+<li><a class="color-anim border-anim" href="" ng-show="!navigationController.showAllTags && navigationController.tags.length > 3" ng-click="navigationController.showAllTags = true"><i class="fa fa-level-down" aria-hidden="true"></i>{{navigationController.tags.length - 3}} more</a></li>

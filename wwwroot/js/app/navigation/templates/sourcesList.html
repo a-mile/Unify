@@ -1,0 +1,8 @@
+<li ng-repeat="source in navigationController.sources" ng-show="$index < 3 || navigationController.showAllSources">
+    <a class="color-anim border-anim" ng-href="#!/source/{{source.id}}/all"  ng-class="{active: {{source.id}} == navigationController.routes.selectedItemId && navigationController.routes.itemType == 'source'}">
+        <i class="fa fa-rss" aria-hidden="true"></i>{{source.name}}
+        <span class="counter">0</span>
+    </a>    
+    <edit-source source="source" ng-show="{{source.id}} == navigationController.routes.selectedItemId && navigationController.edit && navigationController.routes.itemType == 'source'"></edit-source>
+</li>
+<li><a class="color-anim border-anim" href="" ng-show="!navigationController.showAllSources && navigationController.sources.length > 3" ng-click="navigationController.showAllSources = true"><i class="fa fa-level-down" aria-hidden="true"></i>{{navigationController.sources.length - 3}} more</a></li>
